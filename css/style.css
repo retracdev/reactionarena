@@ -22,7 +22,9 @@
   --radius-lg: 28px;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-display: var(--font);
+  /* Wordmarks only: the reactionarena and retrac.space logos keep the collection's typeface. */
+  --font-brand: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
   color-scheme: dark;
 }
@@ -101,7 +103,7 @@ kbd {
 .brand { display: inline-flex; align-items: center; gap: 11px; }
 .brand img { width: 34px; height: 34px; border-radius: 10px; box-shadow: 0 6px 24px -8px rgba(124, 108, 240, 0.8); transition: transform 0.4s var(--ease); }
 .brand:hover img { transform: rotate(-8deg) scale(1.05); }
-.wordmark { font: 700 21px/1 var(--font-display); letter-spacing: -0.035em; color: var(--text); }
+.wordmark { font: 700 21px/1 var(--font-brand); letter-spacing: -0.035em; color: var(--text); }
 .wordmark span { color: var(--lav-muted); }
 .brand-sm img { width: 24px; height: 24px; border-radius: 7px; }
 .brand-sm .wordmark { font-size: 16px; }
@@ -119,7 +121,7 @@ kbd {
   transition: border-color 0.2s, background 0.2s;
 }
 .collection:hover { border-color: var(--border-strong); background: var(--surface-2); }
-.collection b, .footer-collection b { font: 700 14px/1 var(--font-display); letter-spacing: -0.02em; color: var(--text); }
+.collection b, .footer-collection b { font: 700 14px/1 var(--font-brand); letter-spacing: -0.02em; color: var(--text); }
 .collection b span, .footer-collection b span { color: var(--lav-muted); }
 
 /* --- Buttons ------------------------------------------------------------- */
@@ -216,6 +218,7 @@ kbd {
   max-width: 13ch;
   margin: 28px auto 0;
   font-size: clamp(44px, 7.6vw, 88px);
+  font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 1.02;
 }
@@ -287,7 +290,7 @@ kbd {
 }
 .card-icon .ico { width: 23px; height: 23px; }
 .card:hover .card-icon { transform: scale(1.08) rotate(-4deg); }
-.card-num { font: 500 12.5px var(--mono); color: var(--muted); }
+.card-num { font: 500 12.5px var(--font); font-variant-numeric: tabular-nums; color: var(--muted); }
 .card h3 { font-size: 20px; margin-bottom: 7px; }
 .card p { flex: 1; color: var(--text-2); font-size: 14.5px; line-height: 1.5; }
 .card-foot {

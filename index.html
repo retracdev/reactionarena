@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/accounts.css">
   <script type="module" src="js/main.js"></script>
 </head>
 <body>
@@ -25,10 +26,20 @@
         <img src="assets/logo-mark.svg" alt="" width="34" height="34">
         <span class="wordmark">reaction<span>arena</span></span>
       </a>
-      <a class="collection" href="https://retrac.space" rel="noopener">
-        <span class="collection-label">part of</span>
-        <b>retrac<span>.space</span></b>
-      </a>
+      <nav class="header-nav" aria-label="Main">
+        <a class="collection" href="https://retrac.space" rel="noopener">
+          <span class="collection-label">part of</span>
+          <b>retrac<span>.space</span></b>
+        </a>
+        <a class="nav-link" href="#/leaderboards" data-nav="leaderboards">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+          <span>Leaderboards</span>
+        </a>
+        <a class="account-button" id="accountButton" href="https://accounts.retrac.space" target="_blank" rel="noopener">
+          <img src="assets/retrac-space-icon.png" alt="" aria-hidden="true">
+          <span id="accountLabel">Sign in</span>
+        </a>
+      </nav>
     </div>
   </header>
 
@@ -42,7 +53,7 @@
         <img src="assets/logo-mark.svg" alt="" width="24" height="24">
         <span class="wordmark">reaction<span>arena</span></span>
       </a>
-      <p class="footer-note">Results aren't saved yet — cloud sync is on the way.</p>
+      <p class="footer-note">Sign in with retrac.space to put your best scores on the leaderboards.</p>
       <a class="footer-collection" href="https://retrac.space" rel="noopener">
         A <b>retrac<span>.space</span></b> project
       </a>

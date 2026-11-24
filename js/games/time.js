@@ -86,6 +86,7 @@ export default {
       ctx.finish({
         label: 'Average error',
         value: ms,
+        score: ms,
         unit: 'ms off',
         rating: grade(ms, [[100, 'Atomic clock'], [300, 'Excellent'], [700, 'Pretty good'], [1500, 'Fair']], 'Time is relative', true),
         blurb: 'Your internal clock drifts with mood, focus and caffeine. Try again and see.',

@@ -53,6 +53,7 @@ export default {
         ctx.finish({
           label: 'Clicks per second',
           value: cps,
+          score: clicks,
           decimals: 1,
           unit: 'cps',
           rating: grade(cps, [[12, 'Machine-like'], [10, 'Blazing'], [8, 'Rapid'], [6, 'Quick']], 'Casual'),

@@ -86,6 +86,7 @@ export default {
       ctx.finish({
         label: 'Longest sequence',
         value: score,
+        score,
         unit: score === 1 ? 'step' : 'steps',
         rating: grade(score, [[16, 'Exceptional'], [12, 'Superb memory'], [9, 'Great memory'], [6, 'Good memory']], 'Getting there'),
         blurb: 'Most people can hold around 7 steps before things get slippery.',

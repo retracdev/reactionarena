@@ -99,6 +99,7 @@ export default {
       ctx.finish({
         label: 'Average precision',
         value: score,
+        score: shots.reduce((sum, s) => sum + s.pts, 0),
         decimals: 1,
         unit: '/ 100',
         rating: grade(score, [[90, 'Surgical'], [80, 'Sniper'], [68, 'Precise'], [52, 'Steady']], 'Shaky hands'),

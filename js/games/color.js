@@ -85,6 +85,7 @@ export default {
       ctx.finish({
         label: 'Levels cleared',
         value: score,
+        score,
         unit: score === 1 ? 'level' : 'levels',
         rating: grade(score, [[24, 'Colorist'], [18, 'Eagle eye'], [12, 'Sharp eye'], [6, 'Good eye']], 'Keep looking'),
         blurb: 'Screen brightness and night modes affect this one — try it in a few settings.',

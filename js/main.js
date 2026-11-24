@@ -102,7 +102,6 @@ function renderHome() {
   app.innerHTML = `
   <section class="hero view">
     <div class="hero-rings" aria-hidden="true"><span></span><span></span><span></span></div>
-    <div class="hero-badge"><span class="pulse-dot"></span> ${GAMES.length} tests · free to play · runs in your browser</div>
     <h1 class="hero-title">How quick is your <span class="grad">mind</span>, really?</h1>
     <p class="hero-sub">Bite-sized challenges for reflexes, memory, focus and precision. Pick a test, beat the clock, then go again.</p>
     <div class="hero-cta">

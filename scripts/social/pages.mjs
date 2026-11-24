@@ -80,12 +80,12 @@ export function sharePageHtml(page) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(page.title)}</title>
   <meta name="description" content="${esc(page.description)}">
-  <meta name="theme-color" content="#0b0a10">
+  <meta name="theme-color" content="#0a0b09">
 ${meta}
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <meta http-equiv="refresh" content="0; url=${esc(page.redirect)}">
   <script>location.replace(${JSON.stringify(page.redirect)});</script>
-  <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0a10;color:#b8b4cc;font:16px system-ui,sans-serif}a{color:#b7adff}</style>
+  <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0a0b09;color:#b7bdb0;font:16px system-ui,sans-serif}a{color:#b5ef5a}</style>
 </head>
 <body>
   <p>Opening <a href="${esc(page.redirect)}">${esc(page.title)}</a>…</p>

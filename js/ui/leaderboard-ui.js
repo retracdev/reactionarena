@@ -1,7 +1,7 @@
 import { GAMES } from '../games/index.js';
 import { icon } from '../icons.js';
 import { getState, subscribe } from '../account/account.js';
-import { promptSignIn } from '../account/sign-in.js';
+import { promptSignIn, signIn } from '../account/sign-in.js';
 import {
   BOARDS, formatScore, getRankings, getPersonalBest, rankable, submitScore, subscribeLeaderboardChanges,
 } from '../leaderboards.js';
@@ -279,6 +279,29 @@ export function clearPendingGuestRun() {
 }
 
 /**
+ * Submits the run a guest finished before leaving for guided sign-in. Its results screen is
+ * gone by now, so the outcome is a toast, shown once the "You're signed in" popup closes.
+ */
+export function submitCarriedRun({ board, score }) {
+  const game = GAMES.find((g) => g.id === board);
+  if (!game) return false;
+  const toast = (options) => signIn.afterSignedIn(() => window.ReactionArenaToasts?.show({ key: `carried-${board}`, wrap: true, ...options }));
+  return submitScore(board, score, (u) => {
+    if (u.status === 'saved') {
+      toast({
+        icon: 'success',
+        duration: 6000,
+        text: u.improved
+          ? `New personal best on ${game.name}! You’re #${u.rank} on the leaderboard.`
+          : `${game.name} score recorded. Your best still stands: ${formatScore(board, u.personalBest)} (#${u.rank}).`,
+      });
+    } else if (u.status === 'auth' || u.status === 'unconfirmed') {
+      toast({ icon: 'warning', duration: 6000, text: `Your ${game.name} score couldn’t be confirmed. If it reached the server, rankings may still update.` });
+    }
+  });
+}
+
+/**
  * Shows where a finished run stands on the leaderboard inside `node`, submitting it when the
  * visitor is signed in. Guests get a sign-in pop-up (once per visit) and an invite card; if
  * they sign in from it, this run's score is submitted then.
@@ -351,7 +374,7 @@ export function mountResultBoard(node, game, result) {
     const button = node.querySelector('[data-rb-signin]');
     const open = () => {
       pendingGuestRun = { submit };
-      promptSignIn({ purpose: 'score', trigger: button, onCancel: clearPendingGuestRun });
+      promptSignIn({ purpose: 'score', trigger: button, onCancel: clearPendingGuestRun, carry: { board, score } });
     };
     button.addEventListener('click', open);
     // The pop-up appears on its own once per visit, the first time a guest finishes a run.

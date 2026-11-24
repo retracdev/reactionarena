@@ -235,6 +235,140 @@ function leaderboards() {
   `);
 }
 
+/*
+ * 960×1200 art for the retrac.space guided sign-in page: the logo in the middle, over tilted
+ * rows of the home page's test cards.
+ */
+export const GUIDED_SIZE = { width: 960, height: 1200 };
+
+export function guidedHtml() {
+  const tile = (g) => `
+    <div class="gcard" style="--c:${g.color}">
+      <div class="gcard-top"><span class="gcard-icon">${icon(g.icon)}</span></div>
+      <h3>${g.name}</h3>
+      <p>${g.tagline}</p>
+      <div class="gcard-foot"><span>${g.category}</span><span class="go">Play ${icon('arrowRight')}</span></div>
+    </div>`;
+  const ROWS = 9;
+  const PER_ROW = 7;
+  let rows = '';
+  for (let r = 0; r < ROWS; r++) {
+    let row = '';
+    // Shifted by three each row, so neighbours above and below are different tests.
+    for (let i = 0; i < PER_ROW; i++) row += tile(GAMES[(r * 3 + i) % GAMES.length]);
+    rows += `<div class="grow">${row}</div>`;
+  }
+  return `<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="${FONTS}">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    position: relative;
+    width: ${GUIDED_SIZE.width}px;
+    height: ${GUIDED_SIZE.height}px;
+    overflow: hidden;
+    background: #0a0b09;
+    color: #f3f6ee;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .ico { display: block; }
+  .rows {
+    position: absolute;
+    inset: -12% -45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 26px;
+    transform: rotate(-9deg);
+  }
+  .grow { display: flex; justify-content: center; gap: 22px; }
+  .grow:nth-child(even) { transform: translateX(-140px); }
+  .gcard {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    width: 270px;
+    height: 236px;
+    padding: 22px;
+    border-radius: 22px;
+    border: 1.5px solid color-mix(in srgb, var(--c) 30%, rgba(255, 255, 255, 0.08));
+    background:
+      radial-gradient(260px circle at 20% 0%, color-mix(in srgb, var(--c) 22%, transparent), transparent 70%),
+      linear-gradient(180deg, #171a14, #0f110d);
+    box-shadow: 0 24px 40px -18px rgba(0, 0, 0, 0.8), 0 18px 46px -26px color-mix(in srgb, var(--c) 70%, transparent);
+  }
+  .gcard-top { margin-bottom: 16px; }
+  .gcard-icon {
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+  }
+  .gcard-icon .ico { width: 25px; height: 25px; }
+  .gcard h3 { margin: 0 0 6px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .gcard p { flex: 1; margin: 0; font-size: 15px; line-height: 1.45; color: #b7bdb0; overflow: hidden; }
+  .gcard-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7d8577;
+  }
+  .gcard-foot .go { display: flex; align-items: center; gap: 6px; font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--c); }
+  .gcard-foot .go .ico { width: 15px; height: 15px; }
+  /* Darkens the middle so the logo stands out, and the top and bottom a little. */
+  .shade {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle 380px at 50% 50%, rgba(10, 11, 9, 0.94) 38%, rgba(10, 11, 9, 0.6) 70%, rgba(10, 11, 9, 0.2)),
+      linear-gradient(180deg, rgba(10, 11, 9, 0.55), transparent 24%, transparent 76%, rgba(10, 11, 9, 0.55));
+  }
+  .halo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 600px;
+    height: 600px;
+    transform: translate(-50%, -54%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(163, 230, 53, 0.36), rgba(163, 230, 53, 0.1) 45%, transparent 70%);
+  }
+  .logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 34px;
+  }
+  .logo svg { width: 260px; height: 260px; filter: drop-shadow(0 28px 44px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 60px rgba(132, 204, 22, 0.35)); }
+  .logo .wordmark { font: 700 72px/1 'Space Grotesk', sans-serif; letter-spacing: -0.04em; text-shadow: 0 8px 30px rgba(0, 0, 0, 0.8); }
+  .logo .wordmark span { color: #9fd45f; }
+</style>
+</head>
+<body>
+  <div class="rows">${rows}</div>
+  <div class="shade"></div>
+  <div class="halo"></div>
+  <div class="logo">${MARK}<div class="wordmark">reaction<span>arena</span></div></div>
+</body></html>`;
+}
+
 export function cardHtml(card) {
   if (card.kind === 'home') return home();
   if (card.kind === 'leaderboards') return leaderboards();

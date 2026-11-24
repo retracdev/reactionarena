@@ -1,6 +1,7 @@
 import { GAMES } from './games/index.js';
 import { icon } from './icons.js';
 import { fmt } from './util.js';
+import { shareLink, testShareUrl } from './share.js';
 import { check, getState, subscribe, isSignedIn, ACCOUNTS_URL } from './account/account.js';
 import { signIn, promptSignIn } from './account/sign-in.js';
 import { initWelcome } from './account/welcome.js';
@@ -265,6 +266,7 @@ function renderGame(g) {
         <div class="result-board" aria-live="polite"></div>
         <div class="result-actions">
           <button class="btn btn-primary btn-lg" type="button" data-again>${icon('refresh')} Try again</button>
+          <button class="btn btn-ghost btn-lg" type="button" data-share>${icon('share')} <span>Share</span></button>
           <a class="btn btn-ghost btn-lg" href="#/${next.id}">Next: ${next.name} ${icon('arrowRight')}</a>
         </div>
         <p class="hint">Press <kbd>Enter</kbd> to play again</p>
@@ -272,6 +274,19 @@ function renderGame(g) {
     countUp(stage.querySelector('.num'), r.value, r.decimals || 0);
     resultBoardCleanup = mountResultBoard(stage.querySelector('.result-board'), g, r);
     stage.querySelector('[data-again]').addEventListener('click', start);
+    const shareButton = stage.querySelector('[data-share]');
+    shareButton.addEventListener('click', async () => {
+      const score = `${fmt(r.value, r.decimals || 0)} ${r.unit || ''}`.trim();
+      const outcome = await shareLink({
+        url: testShareUrl(g.id),
+        title: `${g.name} · Reaction Arena`,
+        text: `I got ${score} on ${g.name} in Reaction Arena. Can you beat it?`,
+      });
+      if (outcome === 'shared' || !shareButton.isConnected) return;
+      const label = shareButton.querySelector('span');
+      label.textContent = outcome === 'copied' ? 'Link copied!' : 'Couldn’t share';
+      setTimeout(() => { label.textContent = 'Share'; }, 2200);
+    });
   }
 
   function onKey(e) {

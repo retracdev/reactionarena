@@ -402,7 +402,10 @@ function onReturn() {
 
 subscribe(onAccountChange);
 renderAccountButton(getState());
-initWelcome();
+// Not until the loading screen has gone, so the welcome pill isn't hidden behind it.
+const splash = window.ReactionArenaSplash;
+if (splash) splash.whenDone(initWelcome);
+else initWelcome();
 document.addEventListener('visibilitychange', onReturn);
 window.addEventListener('focus', onReturn);
 window.addEventListener('online', onReturn);
@@ -410,3 +413,5 @@ window.addEventListener('online', onReturn);
 window.addEventListener('hashchange', route);
 route();
 checkSession();
+// The first view is on screen, so the loading screen can finish.
+window.ReactionArenaSplash?.appReady();

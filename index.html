@@ -1,8 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="is-splashing">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Set from version.yml by `npm run set-version` and the "Sync version" workflow. Don't edit by hand. -->
+  <meta name="reactionarena-version" content="1.0.0">
+  <script src="js/live-update.js" data-live-update></script>
   <title>Reaction Arena — test your reflexes &amp; memory</title>
   <meta name="description" content="Ten quick browser challenges for reaction time, aim, typing, memory, precision and more. Part of the retrac.space collection.">
   <meta name="theme-color" content="#0a0b09">
@@ -30,9 +33,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/accounts.css">
+  <link rel="stylesheet" href="css/updates.css">
   <script type="module" src="js/main.js"></script>
+  <noscript><style>.splash { display: none; } html.is-splashing { overflow: auto; }</style></noscript>
 </head>
 <body>
+  <!-- The loading screen. js/splash.js fills the bar and takes it away. Live updates show it again (data-update-splash). -->
+  <div class="splash" id="splash" data-update-splash role="progressbar" aria-label="Loading Reaction Arena" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <img class="splash__icon" src="assets/logo-mark.svg" alt="" width="112" height="112">
+    <div class="splash__track"><div class="splash__fill"></div></div>
+  </div>
+
   <div class="bg" aria-hidden="true"></div>
 
   <header class="site-header">
@@ -69,10 +80,20 @@
         <span class="wordmark">reaction<span>arena</span></span>
       </a>
       <p class="footer-note">Sign in with retrac.space to put your best scores on the leaderboards.</p>
-      <a class="footer-collection" href="https://retrac.space" rel="noopener">
-        A <b>retrac<span>.space</span></b> project
-      </a>
+      <div class="footer-end">
+        <button class="btn btn-ghost footer__update" id="checkUpdates" type="button" hidden>
+          <svg class="footer__update-spinner" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+          <span id="checkUpdatesLabel">Check for Updates</span>
+        </button>
+        <a class="footer-collection" href="https://retrac.space" rel="noopener">
+          A <b>retrac<span>.space</span></b> project
+        </a>
+      </div>
     </div>
   </footer>
+
+  <script src="js/splash.js"></script>
+  <script src="js/toasts.js"></script>
+  <script src="js/updates.js"></script>
 </body>
 </html>

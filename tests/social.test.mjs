@@ -6,6 +6,8 @@ import { GAMES } from '../js/games/index.js';
 import { SITE, testShareUrl } from '../js/share.js';
 
 const read = (rel) => fs.readFileSync(new URL(`../${rel}`, import.meta.url));
+// Git may check text files out with CRLF line endings on Windows; compare content, not endings.
+const readText = (rel) => read(rel).toString().split('\r\n').join('\n');
 
 /** Width and height from a JPEG's start-of-frame marker. */
 function jpegSize(buf) {
@@ -28,9 +30,9 @@ test('every test, the home page and the leaderboards have a share page', () => {
 test('committed share pages and index.html tags are up to date (run `npm run build:pages`)', () => {
   for (const page of sharePages()) {
     if (page.file === 'index.html') {
-      assert.ok(read('index.html').toString().includes(homeMetaBlock()), 'index.html social tags are stale');
+      assert.ok(readText('index.html').includes(homeMetaBlock()), 'index.html social tags are stale');
     } else {
-      assert.equal(read(page.file).toString(), sharePageHtml(page), `${page.file} is stale`);
+      assert.equal(readText(page.file), sharePageHtml(page), `${page.file} is stale`);
     }
   }
 });
@@ -46,10 +48,10 @@ test('every card is a 1200×630 JPEG at an absolute URL', () => {
 
 test('share pages send visitors to the matching place in the app', () => {
   for (const g of GAMES) {
-    const html = read(`test/${g.id}/index.html`).toString();
+    const html = readText(`test/${g.id}/index.html`);
     assert.ok(html.includes(`location.replace("/#/${g.id}")`));
     assert.ok(html.includes(`<meta http-equiv="refresh" content="0; url=/#/${g.id}">`));
     assert.ok(html.includes(`<meta property="og:url" content="${testShareUrl(g.id)}">`));
   }
-  assert.ok(read('leaderboards/index.html').toString().includes('location.replace("/#/leaderboards")'));
+  assert.ok(readText('leaderboards/index.html').includes('location.replace("/#/leaderboards")'));
 });

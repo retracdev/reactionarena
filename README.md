@@ -57,6 +57,25 @@ Sign-in uses your [retrac.space](https://accounts.retrac.space) account, with th
 
 The backend has to trust `https://reaction.retrac.space` and know the game's boards before any of this works. See [docs/backend-setup.md](docs/backend-setup.md).
 
+## Social cards
+
+Link previews ignore `#hashes`, so every app URL would show the same card. Shared links point at small static pages instead, and each one has its own 1200×630 card and sends visitors straight on to the app:
+
+| Link | Card | Opens |
+|------|------|-------|
+| `/` | `assets/social/home.jpg` | home |
+| `/test/<id>/` | `assets/social/tests/<id>.jpg` | `/#/<id>` |
+| `/leaderboards/` | `assets/social/leaderboards.jpg` | `/#/leaderboards` |
+
+The Share button on every results screen uses the `/test/<id>/` link. After changing a test's name or tagline, or the card design in `scripts/social/card.mjs`, regenerate everything:
+
+```sh
+npm run build:social   # pages + card images (needs Chrome or Edge installed)
+npm run build:pages    # pages and index.html tags only
+```
+
+`npm test` fails if the committed pages or cards are out of date.
+
 ## Tests
 
 ```sh

@@ -4,6 +4,7 @@
  *   test/<id>/index.html, leaderboards/index.html   share pages with their own cards
  *   the Open Graph block in index.html               the home page's card
  *   assets/social/*.jpg                              the 1200×630 card images
+ *   assets/social/guided-setup.jpg                   960×1200 art for the guided sign-in page
  *
  * Card images are rendered with a locally installed Chrome (or Edge) through playwright-core,
  * the same way Simple Soundboard does it. Pass --pages-only to skip the images.
@@ -14,7 +15,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CARDS_DIR, META_END, META_START, homeMetaBlock, sharePageHtml, sharePages } from './social/pages.mjs';
-import { cardHtml } from './social/card.mjs';
+import { GUIDED_SIZE, cardHtml, guidedHtml } from './social/card.mjs';
+
+const GUIDED_IMAGE = 'guided-setup.jpg';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pagesOnly = process.argv.includes('--pages-only');
@@ -66,6 +69,13 @@ try {
     await page.screenshot({ path: out, type: 'jpeg', quality: 90 });
     console.log(`  rendered ${CARDS_DIR}/${share.image}`);
   }
+
+  // Art for the retrac.space guided sign-in page (js/account/sign-in.js links to it).
+  await page.setViewportSize(GUIDED_SIZE);
+  await page.setContent(guidedHtml(), { waitUntil: 'networkidle' });
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: path.join(ROOT, CARDS_DIR, GUIDED_IMAGE), type: 'jpeg', quality: 88 });
+  console.log(`  rendered ${CARDS_DIR}/${GUIDED_IMAGE}`);
 } finally {
   await browser.close();
 }

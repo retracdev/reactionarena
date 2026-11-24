@@ -55,3 +55,7 @@ test('share pages send visitors to the matching place in the app', () => {
   }
   assert.ok(readText('leaderboards/index.html').includes('location.replace("/#/leaderboards")'));
 });
+
+test('the guided sign-in art is a 960×1200 JPEG', () => {
+  assert.deepEqual(jpegSize(read(`${CARDS_DIR}/guided-setup.jpg`)), { width: 960, height: 1200 });
+});

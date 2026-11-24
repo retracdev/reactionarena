@@ -9,7 +9,11 @@ const { window } = dom;
 for (const key of ['window', 'document', 'HTMLElement', 'Node']) globalThis[key] = key === 'window' ? window : window[key];
 // jsdom doesn't implement modal dialogs.
 window.HTMLDialogElement.prototype.showModal = function showModal() { this.open = true; };
-window.HTMLDialogElement.prototype.close = function close() { this.open = false; };
+window.HTMLDialogElement.prototype.close = function close() {
+  if (!this.open) return;
+  this.open = false;
+  this.dispatchEvent(new window.Event('close'));
+};
 window.open = () => null;
 
 const { GREETINGS, showWelcomePill } = await import('../js/account/welcome.js');
@@ -83,4 +87,58 @@ test('scores that cannot rank say so instead of submitting', async () => {
   const cleanup = mountResultBoard(node, sequence, { score: 0 });
   assert.equal(node.className, 'result-board muted');
   cleanup();
+});
+
+test('the sign-in pop-up sends guests to guided setup in this tab and comes back here', async () => {
+  mockFetch(accountRoutes(null));
+  await check();
+  signIn.open({ purpose: 'score', carry: { board: 'reaction', score: 231 } });
+  const link = document.querySelector('.signin-dialog [data-action="guided"]');
+  assert.equal(link.tagName, 'A', 'an ordinary link, in this tab');
+  assert.equal(link.textContent, 'Sign in or create account');
+  const guided = new URL(link.href);
+  assert.equal(guided.origin + guided.pathname, 'https://accounts.retrac.space/guided-setup');
+  assert.equal(guided.searchParams.get('app'), 'Reaction Arena');
+  assert.equal(guided.searchParams.get('redirect'), 'https://reaction.retrac.space/?signed-in=1');
+  assert.equal(guided.searchParams.get('image'), 'https://reaction.retrac.space/assets/social/guided-setup.jpg');
+
+  // Following it keeps the guest's run for when they're back.
+  link.dispatchEvent(new window.MouseEvent('click', { bubbles: true, cancelable: true }));
+  const kept = JSON.parse(window.sessionStorage.getItem('reaction-arena:run-after-sign-in'));
+  assert.deepEqual({ board: kept.board, score: kept.score }, { board: 'reaction', score: 231 });
+  assert.equal(signIn.isOpen(), true, 'the pop-up stays while the page leaves');
+  signIn.finish();
+});
+
+test('guided setup comes back to the same page, and other hosts come back to the real site', async () => {
+  const { returnUrl } = await import('../js/account/sign-in.js');
+  assert.equal(returnUrl('http://localhost:8080/?q=1#/reaction'), 'http://localhost:8080/?q=1&signed-in=1#/reaction');
+  assert.equal(returnUrl('https://reaction.retrac.space/#/aim'), 'https://reaction.retrac.space/?signed-in=1#/aim');
+  assert.equal(returnUrl('https://example.com/#/aim'), 'https://reaction.retrac.space/?signed-in=1');
+  assert.equal(returnUrl('https://retrac.space.example.com/'), 'https://reaction.retrac.space/?signed-in=1');
+});
+
+test('back from guided setup, it says you are signed in and hands over the guest run once', async () => {
+  window.sessionStorage.setItem('reaction-arena:run-after-sign-in', JSON.stringify({ board: 'reaction', score: 231, at: Date.now() }));
+  window.history.replaceState(null, '', '/?signed-in=1#/reaction');
+  mockFetch(accountRoutes('carter'));
+  // A fresh copy of the module, as if the page had just loaded at that address.
+  const fresh = await import('../js/account/sign-in.js?returned');
+  assert.equal(window.location.href, 'https://reaction.retrac.space/#/reaction', 'the flag leaves the address');
+  assert.equal(window.sessionStorage.getItem('reaction-arena:run-after-sign-in'), null);
+  assert.equal(fresh.signIn.returnedFromSignIn, true);
+  assert.deepEqual(fresh.takeCarriedRun(), { board: 'reaction', score: 231 });
+  assert.equal(fresh.takeCarriedRun(), null);
+
+  const done = await waitFor(() => document.querySelector('dialog.signed-in-dialog[open]'));
+  assert.equal(done.querySelector('h2').textContent, 'You’re signed in');
+  assert.equal(done.querySelector('p').textContent, 'Welcome, carter. We’re putting your 231 ms on the Reaction Time leaderboard.');
+
+  let ran = false;
+  fresh.signIn.afterSignedIn(() => { ran = true; });
+  assert.equal(ran, false, 'toasts wait for the popup');
+  done.querySelector('[data-action="done"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+  assert.equal(done.open, false);
+  assert.equal(ran, true);
+  window.history.replaceState(null, '', '/');
 });

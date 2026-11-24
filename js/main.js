@@ -3,10 +3,10 @@ import { icon } from './icons.js';
 import { fmt } from './util.js';
 import { shareLink, testShareUrl } from './share.js';
 import { check, getState, subscribe, isSignedIn, ACCOUNTS_URL } from './account/account.js';
-import { signIn, promptSignIn } from './account/sign-in.js';
+import { signIn, promptSignIn, takeCarriedRun } from './account/sign-in.js';
 import { initWelcome } from './account/welcome.js';
 import {
-  mountMiniBoard, mountResultBoard, renderLeaderboardPage, submitPendingGuestRun, clearPendingGuestRun,
+  mountMiniBoard, mountResultBoard, renderLeaderboardPage, submitPendingGuestRun, clearPendingGuestRun, submitCarriedRun,
 } from './ui/leaderboard-ui.js';
 
 const app = document.getElementById('app');
@@ -380,6 +380,9 @@ function onAccountChange(s) {
     if (signIn.isOpen()) signIn.finish();
     // A guest who signed in from a results screen gets that run's score submitted.
     submitPendingGuestRun();
+    // The same for a run they finished before leaving for guided sign-in in this tab.
+    const carried = takeCarriedRun();
+    if (carried) submitCarriedRun(carried);
   } else if (s.status === 'guest') {
     // Nothing to do yet; a pending run waits for the sign-in pop-up to finish or cancel.
   } else if (s.status !== 'error' && s.status !== 'unknown') {
@@ -404,8 +407,11 @@ subscribe(onAccountChange);
 renderAccountButton(getState());
 // Not until the loading screen has gone, so the welcome pill isn't hidden behind it.
 const splash = window.ReactionArenaSplash;
-if (splash) splash.whenDone(initWelcome);
-else initWelcome();
+// Coming straight back from guided sign-in shows "You're signed in" instead.
+if (!signIn.returnedFromSignIn) {
+  if (splash) splash.whenDone(initWelcome);
+  else initWelcome();
+}
 document.addEventListener('visibilitychange', onReturn);
 window.addEventListener('focus', onReturn);
 window.addEventListener('online', onReturn);

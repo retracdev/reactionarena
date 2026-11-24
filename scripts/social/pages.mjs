@@ -77,7 +77,7 @@ export function sharePageHtml(page) {
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>${esc(page.title)}</title>
   <meta name="description" content="${esc(page.description)}">
   <meta name="theme-color" content="#0a0b09">

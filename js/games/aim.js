@@ -93,6 +93,7 @@ export default {
       ctx.finish({
         label: 'Average time per target',
         value: a,
+        score: a,
         unit: 'ms',
         rating: grade(a, [[380, 'Elite aim'], [460, 'Great aim'], [560, 'Good aim'], [700, 'Steady']], 'Keep practicing', true),
         blurb: acc < 85 ? 'Fast is good — but those misses add up. Try slowing down a hair.' : 'Clean shooting. Can you shave off a few more milliseconds?',

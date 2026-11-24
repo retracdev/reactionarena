@@ -118,6 +118,7 @@ export default {
         ctx.finish({
           label: 'Problems solved',
           value: correct,
+          score: correct,
           unit: correct === 1 ? 'problem' : 'problems',
           rating: grade(correct, [[26, 'Human calculator'], [20, 'Mathlete'], [14, 'Quick thinker'], [8, 'Solid']], 'Warming up'),
           blurb: 'Difficulty ramps every four correct answers — multiplication and division unlock along the way.',

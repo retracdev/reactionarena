@@ -105,6 +105,7 @@ export default {
       ctx.after(500, () => ctx.finish({
         label: 'Typing speed',
         value: s.wpm,
+        score: s.wpm,
         unit: 'wpm',
         rating: grade(s.wpm, [[100, 'Blazing'], [80, 'Very fast'], [60, 'Fast'], [40, 'Solid']], 'Warming up'),
         blurb: s.acc < 90 ? 'Speed is nothing without accuracy — errors don\'t count toward your WPM.' : 'Nice and clean. Only correctly typed characters count toward WPM.',

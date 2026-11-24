@@ -1,6 +1,12 @@
 import { GAMES } from './games/index.js';
 import { icon } from './icons.js';
 import { fmt } from './util.js';
+import { check, getState, subscribe, isSignedIn, ACCOUNTS_URL } from './account/account.js';
+import { signIn, promptSignIn } from './account/sign-in.js';
+import { initWelcome } from './account/welcome.js';
+import {
+  mountMiniBoard, mountResultBoard, renderLeaderboardPage, submitPendingGuestRun, clearPendingGuestRun,
+} from './ui/leaderboard-ui.js';
 
 const app = document.getElementById('app');
 const DEFAULT_TITLE = 'Reaction Arena — test your reflexes & memory';
@@ -102,6 +108,7 @@ function renderHome() {
     <div class="hero-cta">
       <a class="btn btn-primary btn-lg" href="#/${GAMES[0].id}">${icon('play')} Start with ${GAMES[0].name}</a>
       <button class="btn btn-ghost btn-lg" type="button" data-scroll>Browse all tests</button>
+      <a class="btn btn-ghost btn-lg" href="#/leaderboards">${icon('trophy')} Leaderboards</a>
     </div>
   </section>
 
@@ -124,11 +131,11 @@ function renderHome() {
       <h3>Ten disciplines</h3>
       <p>Reflexes, aim, typing, memory, timing, color vision, arithmetic and more.</p>
     </div>
-    <div class="feature">
-      <span class="feature-icon">${icon('cloud')}</span>
-      <h3>Records, soon</h3>
-      <p>Personal bests with cloud sync across the retrac.space collection are on the way.</p>
-    </div>
+    <a class="feature feature-link" href="#/leaderboards">
+      <span class="feature-icon">${icon('trophy')}</span>
+      <h3>Leaderboards</h3>
+      <p>Sign in with your retrac.space account and see how your personal bests stack up. ${icon('arrowRight')}</p>
+    </a>
   </section>`;
 
   app.querySelector('[data-scroll]').addEventListener('click', () => {
@@ -182,6 +189,7 @@ function renderGame(g) {
       <div class="hud" aria-live="polite"></div>
     </div>
     <div class="stage"></div>
+    <div class="mini-board-slot"></div>
     <nav class="game-pager" aria-label="More tests">
       <a href="#/${prev.id}" style="--accent:${prev.color}">
         ${icon('arrowLeft')}
@@ -199,10 +207,14 @@ function renderGame(g) {
   let session = null;
   let state = 'intro';
   let resultAt = 0;
+  let resultBoardCleanup = null;
+  const miniBoardCleanup = mountMiniBoard(app.querySelector('.mini-board-slot'), g);
 
   function endSession() {
     session?.destroy();
     session = null;
+    resultBoardCleanup?.();
+    resultBoardCleanup = null;
   }
 
   function intro() {
@@ -251,6 +263,7 @@ function renderGame(g) {
         <div class="rating">${icon('zap')} ${r.rating}</div>
         ${r.blurb ? `<p class="blurb">${r.blurb}</p>` : ''}
         ${stats ? `<div class="result-stats">${stats}</div>` : '<div class="result-gap"></div>'}
+        <div class="result-board" aria-live="polite"></div>
         <div class="result-actions">
           <button class="btn btn-primary btn-lg" type="button" data-again>${icon('refresh')} Try again</button>
           <a class="btn btn-ghost btn-lg" href="#/${next.id}">Next: ${next.name} ${icon('arrowRight')}</a>
@@ -258,6 +271,7 @@ function renderGame(g) {
         <p class="hint">Press <kbd>Enter</kbd> to play again</p>
       </div>`;
     countUp(stage.querySelector('.num'), r.value, r.decimals || 0);
+    resultBoardCleanup = mountResultBoard(stage.querySelector('.result-board'), g, r);
     stage.querySelector('[data-again]').addEventListener('click', start);
   }
 
@@ -281,6 +295,7 @@ function renderGame(g) {
 
   return () => {
     endSession();
+    miniBoardCleanup();
     document.removeEventListener('keydown', onKey);
   };
 }
@@ -291,9 +306,18 @@ function renderGame(g) {
 function route() {
   teardown?.();
   teardown = null;
-  const id = location.hash.replace(/^#\/?/, '').split(/[/?]/)[0];
+  const parts = location.hash.replace(/^#\/?/, '').split(/[/?]/);
+  const id = parts[0];
   const game = GAMES.find((g) => g.id === id);
-  if (game) {
+  document.querySelectorAll('[data-nav]').forEach((a) => {
+    if (a.dataset.nav === id) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+  if (id === 'leaderboards') {
+    const board = GAMES.find((g) => g.id === parts[1]) || GAMES[0];
+    document.title = `${board.name} Leaderboard · Reaction Arena`;
+    teardown = renderLeaderboardPage(app, board.id);
+  } else if (game) {
     document.title = `${game.name} · Reaction Arena`;
     teardown = renderGame(game);
   } else {
@@ -303,5 +327,72 @@ function route() {
   window.scrollTo(0, 0);
 }
 
+/* ------------------------------------------------------------------ */
+/* Account                                                             */
+/* ------------------------------------------------------------------ */
+const SESSION_RECHECK_MS = 60000;
+const accountButton = document.getElementById('accountButton');
+const accountLabel = document.getElementById('accountLabel');
+let lastSessionCheck = 0;
+let actionPrompted = false;
+
+function checkSession() {
+  lastSessionCheck = Date.now();
+  return check();
+}
+
+// Signed out, the header button opens the sign-in pop-up. Signed in, it's a plain link to
+// the accounts site, where the visitor manages their account.
+function renderAccountButton(s) {
+  const signedIn = isSignedIn(s);
+  accountButton.classList.toggle('signed-in', signedIn);
+  accountLabel.textContent = s.status === 'authenticated' ? s.username : signedIn ? 'Manage account' : 'Sign in';
+  accountButton.title = signedIn ? 'Manage your retrac.space account' : 'Sign in with retrac.space';
+  if (signedIn) accountButton.removeAttribute('aria-haspopup');
+  else accountButton.setAttribute('aria-haspopup', 'dialog');
+}
+
+accountButton.href = ACCOUNTS_URL;
+accountButton.addEventListener('click', (event) => {
+  if (isSignedIn()) return;
+  event.preventDefault();
+  if (signIn.isOpen()) return;
+  promptSignIn({ purpose: 'account', trigger: accountButton });
+});
+
+function onAccountChange(s) {
+  renderAccountButton(s);
+  if (s.status === 'authenticated') {
+    if (signIn.isOpen()) signIn.finish();
+    // A guest who signed in from a results screen gets that run's score submitted.
+    submitPendingGuestRun();
+  } else if (s.status === 'guest') {
+    // Nothing to do yet; a pending run waits for the sign-in pop-up to finish or cancel.
+  } else if (s.status !== 'error' && s.status !== 'unknown') {
+    clearPendingGuestRun();
+  }
+  // An account that needs action is told so once, straight away.
+  if (s.status !== 'action') {
+    if (s.status !== 'error') actionPrompted = false;
+  } else if (!actionPrompted) {
+    actionPrompted = true;
+    if (!signIn.isOpen()) signIn.open({ stage: 'action' });
+  }
+}
+
+// Coming back to the tab is the moment to catch up: another tab may have signed in or out.
+function onReturn() {
+  if (document.hidden || signIn.isOpen()) return;
+  if (Date.now() - lastSessionCheck >= SESSION_RECHECK_MS) checkSession();
+}
+
+subscribe(onAccountChange);
+renderAccountButton(getState());
+initWelcome();
+document.addEventListener('visibilitychange', onReturn);
+window.addEventListener('focus', onReturn);
+window.addEventListener('online', onReturn);
+
 window.addEventListener('hashchange', route);
 route();
+checkSession();

@@ -109,6 +109,7 @@ export default {
       ctx.finish({
         label: 'Levels cleared',
         value: score,
+        score,
         unit: score === 1 ? 'level' : 'levels',
         rating: grade(score, [[14, 'Eidetic'], [10, 'Photographic'], [7, 'Great memory'], [4, 'Good memory']], 'Getting started'),
         blurb: 'Try chunking the pattern into shapes — it\'s easier to remember a "T" than five tiles.',

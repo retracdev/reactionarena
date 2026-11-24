@@ -35,12 +35,33 @@ Routing is hash-based (`#/reaction`, `#/aim`, …), so it works on GitHub Pages 
 
 ```
 index.html          page shell (header, footer)
-css/style.css       all styles
+css/style.css       site and game styles
+css/accounts.css    sign-in, welcome pill and leaderboard styles
 js/main.js          router, home page, game shell (intro → play → result)
 js/games/*.js       one module per test, registered in js/games/index.js
+js/account/         retrac.space session, sign-in pop-up, welcome pill
+js/leaderboards.js  boards, API client and score submission
+js/ui/              leaderboard page, per-test top five, results-screen status
 assets/             logo, mark and favicon
 ```
 
 Each game exports `{ id, name, icon, color, category, tagline, howTo, run(ctx) }`. `run` builds into `ctx.stage`, uses `ctx.after / every / frame / on` so everything is cleaned up automatically, and calls `ctx.finish(result)` when done.
 
-Results aren't saved yet. Cloud sync is planned.
+## Accounts & leaderboards
+
+Sign-in uses your [retrac.space](https://accounts.retrac.space) account, with the same flow as Simple Soundboard and BasketSmash. The sign-in cookie stays on accounts.retrac.space. This site asks it who is signed in, and fetches a short-lived token only when it needs to write a score. Tokens are never stored.
+
+- Signed in, every finished run is submitted to that test's leaderboard on the retrac.space API, which keeps each player's personal best.
+- Guests can play everything but can't rank. Finishing a run as a guest opens a sign-in pop-up (once per visit), and signing in from it submits that run.
+- `#/leaderboards/<test>` shows the full rankings, and each test page shows the top five.
+
+The backend has to trust `https://reaction.retrac.space` and know the game's boards before any of this works. See [docs/backend-setup.md](docs/backend-setup.md).
+
+## Tests
+
+```sh
+npm install
+npm test
+```
+
+Tests run in Node with mocked `fetch` (and jsdom for the UI), so they never call the real services.

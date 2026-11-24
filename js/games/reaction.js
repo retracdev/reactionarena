@@ -74,6 +74,7 @@ export default {
       ctx.finish({
         label: 'Average reaction time',
         value: a,
+        score: a,
         unit: 'ms',
         rating: grade(a, [[180, 'Superhuman'], [220, 'Lightning fast'], [260, 'Sharp'], [320, 'Solid']], 'Keep practicing', true),
         blurb: 'Most people land somewhere between 200 and 300 ms.',

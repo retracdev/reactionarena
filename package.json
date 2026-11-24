@@ -1,0 +1,12 @@
+{
+  "name": "reaction-arena",
+  "private": true,
+  "description": "Development tools for Reaction Arena. The site itself has no dependencies or build step.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\""
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
+}

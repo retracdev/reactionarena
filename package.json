@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --test \"tests/*.test.mjs\"",
     "build:social": "node scripts/build-social.mjs",
-    "build:pages": "node scripts/build-social.mjs --pages-only"
+    "build:pages": "node scripts/build-social.mjs --pages-only",
+    "set-version": "node scripts/set-version.cjs"
   },
   "devDependencies": {
     "jsdom": "^26.1.0",

@@ -42,6 +42,11 @@ js/games/*.js       one module per test, registered in js/games/index.js
 js/account/         retrac.space session, sign-in pop-up, welcome pill
 js/leaderboards.js  boards, API client and score submission
 js/ui/              leaderboard page, per-test top five, results-screen status
+js/live-update.js   versions and in-place updates (classic script, loads first)
+js/splash.js        loading screen
+js/toasts.js        toast notifications
+js/updates.js       Check for Updates button
+version.yml         the published version
 assets/             logo, mark and favicon
 ```
 
@@ -56,6 +61,24 @@ Sign-in uses your [retrac.space](https://accounts.retrac.space) account, with th
 - `#/leaderboards/<test>` shows the full rankings, and each test page shows the top five.
 
 The backend has to trust `https://reaction.retrac.space` and know the game's boards before any of this works. See [docs/backend-setup.md](docs/backend-setup.md).
+
+## Versions & live updates
+
+The same system as Simple Soundboard. `version.yml` holds the published version. Open tabs check it every 30 seconds and switch to a newer version **in place, without reloading**: the loading screen comes up, the old app shuts down, the new one starts, and a toast says it's updated. The footer's **Check for Updates** button does the same on demand.
+
+**To publish an update, raise `version` in `version.yml`** and push to `main`. The "Sync version" workflow copies it into `<meta name="reactionarena-version">` in `index.html`. Open tabs only install a page whose meta matches `version.yml`. To set both locally:
+
+```sh
+npm run set-version -- 1.1.0
+```
+
+Things to know when changing the app:
+
+- `js/live-update.js` runs first and is never replaced by an update. Changes to it reach visitors on their next real page load.
+- Automatic updates wait while a test is in progress, a dialog is open or the tab is hidden.
+- ES modules must import each other with relative paths (`./x.js`, `../x.js`) and can't use `import.meta.url`. An update loads the whole module graph again from fresh `blob:` URLs, because the browser would otherwise reuse the old copy of every imported module.
+- Classic scripts (`splash.js`, `toasts.js`, `updates.js`) share things through `window.ReactionArena*` properties.
+- To try the full update flow without publishing anything, run `ReactionArenaLiveUpdate.simulateUpdate()` in the browser console.
 
 ## Social cards
 

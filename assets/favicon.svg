@@ -1,12 +1,74 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <linearGradient id="ra-bg" x1="6" y1="4" x2="58" y2="62" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ECE8FF"/>
-      <stop offset="0.55" stop-color="#B3A8FA"/>
-      <stop offset="1" stop-color="#7A6BE6"/>
+    <!-- Lime tile -->
+    <linearGradient id="ra-tile" x1="32" y1="0" x2="32" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D2F77A"/>
+      <stop offset="0.5" stop-color="#9BE03A"/>
+      <stop offset="1" stop-color="#4DB52A"/>
     </linearGradient>
+    <linearGradient id="ra-tile-rim" x1="32" y1="0" x2="32" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.7"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.3"/>
+    </linearGradient>
+
+    <!-- Frosted glass mouse: flat, white, tinted by the tile -->
+    <linearGradient id="ra-mouse" x1="32" y1="11" x2="32" y2="53" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#F1FCE0" stop-opacity="0.72"/>
+    </linearGradient>
+    <linearGradient id="ra-mouse-rim" x1="32" y1="11" x2="32" y2="53" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.7"/>
+    </linearGradient>
+
+    <!-- Lime glass bolt, one layer up -->
+    <linearGradient id="ra-bolt" x1="28" y1="25" x2="37" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6FD62A" stop-opacity="0.94"/>
+      <stop offset="1" stop-color="#17973A" stop-opacity="0.94"/>
+    </linearGradient>
+    <linearGradient id="ra-bolt-rim" x1="26" y1="25" x2="40" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.85"/>
+      <stop offset="0.4" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.18"/>
+    </linearGradient>
+
+    <filter id="ra-soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+    <filter id="ra-softer" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.1"/>
+    </filter>
+
+    <!-- Shadows only fall outside the shape that casts them. -->
+    <mask id="ra-outside-mouse" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
+      <rect width="64" height="64" fill="#FFFFFF"/>
+      <rect x="18" y="11" width="28" height="42" rx="14" fill="#000000"/>
+    </mask>
+    <clipPath id="ra-in-mouse"><rect x="18" y="11" width="28" height="42" rx="14"/></clipPath>
+    <clipPath id="ra-in-tile"><rect width="64" height="64" rx="14.5"/></clipPath>
   </defs>
-  <rect width="64" height="64" rx="18" fill="url(#ra-bg)"/>
-  <circle cx="32" cy="32" r="19.5" stroke="#110E1A" stroke-opacity="0.2" stroke-width="3.5"/>
-  <path d="M35.5 11.5 19.5 35h11.2l-3.2 17.5L44.5 28H33.3l2.2-16.5Z" fill="#110E1A"/>
+
+  <g clip-path="url(#ra-in-tile)">
+    <rect width="64" height="64" fill="url(#ra-tile)"/>
+    <!-- The mouse's soft shadow on the tile -->
+    <rect x="18" y="13.5" width="28" height="42" rx="14" fill="#1F5A10" fill-opacity="0.32" filter="url(#ra-soft)" mask="url(#ra-outside-mouse)"/>
+  </g>
+  <rect x="0.6" y="0.6" width="62.8" height="62.8" rx="13.9" stroke="url(#ra-tile-rim)" stroke-width="1.2"/>
+
+  <!-- Mouse -->
+  <rect x="18" y="11" width="28" height="42" rx="14" fill="url(#ra-mouse)"/>
+  <rect x="18.5" y="11.5" width="27" height="41" rx="13.5" stroke="url(#ra-mouse-rim)" stroke-width="1"/>
+  <path d="M32 14V23.5" stroke="#6FAE2E" stroke-opacity="0.3" stroke-width="1.2" stroke-linecap="round"/>
+  <rect x="30.4" y="15" width="3.2" height="6" rx="1.6" fill="#6FAE2E" fill-opacity="0.35"/>
+
+  <!-- The bolt's small shadow on the mouse -->
+  <g clip-path="url(#ra-in-mouse)">
+    <path d="M35 26.5 24.5 40.5h7.5l-2.4 10.5L41 36h-7.6L35 26.5Z" fill="#2F6B12" fill-opacity="0.35" stroke="#2F6B12" stroke-opacity="0.35" stroke-width="1.6" stroke-linejoin="round" filter="url(#ra-softer)"/>
+  </g>
+
+  <!-- Bolt -->
+  <path d="M35 25 24.5 39h7.5l-2.4 10.5L41 34.5h-7.6L35 25Z" fill="url(#ra-bolt)" stroke="url(#ra-bolt)" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M35 25 24.5 39h7.5l-2.4 10.5L41 34.5h-7.6L35 25Z" stroke="url(#ra-bolt-rim)" stroke-width="0.7" stroke-linejoin="round"/>
 </svg>

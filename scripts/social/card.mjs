@@ -17,8 +17,8 @@ const BASE_CSS = `
     width: 1200px;
     height: 630px;
     overflow: hidden;
-    background: #0b0a10;
-    color: #f2f0fb;
+    background: #0a0b09;
+    color: #f3f6ee;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
@@ -27,7 +27,7 @@ const BASE_CSS = `
     inset: 0;
     background:
       radial-gradient(780px 520px at 8% -18%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 62%),
-      radial-gradient(640px 460px at 104% 8%, rgba(183, 173, 255, 0.14), transparent 60%),
+      radial-gradient(640px 460px at 104% 8%, rgba(181, 239, 90, 0.14), transparent 60%),
       radial-gradient(720px 420px at 70% 125%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%);
   }
   .grid {
@@ -49,9 +49,9 @@ const BASE_CSS = `
     justify-content: space-between;
   }
   .brand { display: flex; align-items: center; gap: 16px; }
-  .brand svg { width: 56px; height: 56px; border-radius: 16px; box-shadow: 0 10px 34px -10px rgba(124, 108, 240, 0.9); }
+  .brand svg { width: 56px; height: 56px; border-radius: 13px; box-shadow: 0 10px 34px -10px rgba(101, 200, 46, 0.9); }
   .wordmark { font: 700 36px/1 'Space Grotesk', sans-serif; letter-spacing: -0.035em; }
-  .wordmark span { color: #948ec0; }
+  .wordmark span { color: #9fd45f; }
   .collection {
     display: flex;
     align-items: center;
@@ -59,11 +59,11 @@ const BASE_CSS = `
     padding: 11px 20px;
     border-radius: 999px;
     font-size: 19px;
-    color: #7f7a98;
+    color: #7d8577;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.04);
   }
-  .collection b { font: 700 21px/1 'Space Grotesk', sans-serif; letter-spacing: -0.02em; color: #f2f0fb; }
+  .collection b { font: 700 21px/1 'Space Grotesk', sans-serif; letter-spacing: -0.02em; color: #f3f6ee; }
   .collection b span { color: #948ec0; }
   .bottom {
     position: absolute;
@@ -75,14 +75,14 @@ const BASE_CSS = `
     justify-content: space-between;
     font-size: 21px;
     font-weight: 500;
-    color: #7f7a98;
+    color: #7d8577;
   }
-  .bottom strong { color: #b8b4cc; font-weight: 600; }
+  .bottom strong { color: #b7bdb0; font-weight: 600; }
   .bottom .pill {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #b8b4cc;
+    color: #b7bdb0;
   }
   .bottom .pill .ico { width: 24px; height: 24px; color: #fbbf24; }
   .ico { display: block; }
@@ -90,14 +90,14 @@ const BASE_CSS = `
     display: grid;
     place-items: center;
     color: var(--c);
-    background: color-mix(in srgb, var(--c) 14%, #0b0a10);
+    background: color-mix(in srgb, var(--c) 14%, #0a0b09);
     border: 1.5px solid color-mix(in srgb, var(--c) 34%, transparent);
   }
   h1 { margin: 0; font-weight: 800; letter-spacing: -0.045em; line-height: 1; }
   p { margin: 0; text-wrap: balance; }
   h1 { text-wrap: balance; }
   .grad {
-    background: linear-gradient(100deg, #f2efff 0%, #b7adff 45%, #8574f3 100%);
+    background: linear-gradient(100deg, #f4ffe2 0%, #c4f46e 45%, #5cc22e 100%);
     -webkit-background-clip: text;
     color: transparent;
   }
@@ -126,7 +126,7 @@ function frame(accent, body, extraCss = '') {
 
 function home() {
   const tiles = GAMES.map((g) => `<div class="tile" style="--c:${g.color}">${icon(g.icon)}</div>`).join('');
-  return frame('#7c6cf0', `
+  return frame('#84cc16', `
     <div class="home">
       <h1>How quick is your <span class="grad">mind</span>, really?</h1>
       <p>Ten bite-sized tests for reflexes, memory, focus and precision.</p>
@@ -134,7 +134,7 @@ function home() {
     </div>`, `
     .home { position: absolute; left: 64px; right: 64px; top: 150px; }
     .home h1 { font-size: 80px; max-width: 900px; }
-    .home p { margin-top: 20px; font-size: 28px; color: #b8b4cc; }
+    .home p { margin-top: 20px; font-size: 28px; color: #b7bdb0; }
     .tiles { display: flex; gap: 14px; margin-top: 38px; }
     .tiles .tile { width: 80px; height: 80px; border-radius: 22px; }
     .tiles .ico { width: 38px; height: 38px; }
@@ -156,7 +156,7 @@ function test(id) {
     .test { position: absolute; left: 64px; top: 0; bottom: 0; width: 700px; display: flex; flex-direction: column; justify-content: center; padding-bottom: 10px; }
     .eyebrow { font-size: 20px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
     .test h1 { margin-top: 12px; font-size: 88px; }
-    .test p { margin-top: 18px; font-size: 31px; line-height: 1.32; color: #b8b4cc; }
+    .test p { margin-top: 18px; font-size: 31px; line-height: 1.32; color: #b7bdb0; }
     .rings { position: absolute; left: 960px; top: 330px; color: var(--c); }
     .rings span {
       position: absolute;
@@ -195,7 +195,7 @@ function leaderboards() {
     .lb { position: absolute; left: 64px; top: 170px; width: 600px; }
     .eyebrow { font-size: 20px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #fbbf24; }
     .lb h1 { margin-top: 12px; font-size: 88px; }
-    .lb p { margin-top: 20px; font-size: 30px; line-height: 1.32; color: #b8b4cc; }
+    .lb p { margin-top: 20px; font-size: 30px; line-height: 1.32; color: #b7bdb0; }
     .podium { position: absolute; right: 72px; bottom: 120px; display: flex; align-items: flex-end; gap: 14px; }
     .spot { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 122px; }
     .medal {
@@ -206,7 +206,7 @@ function leaderboards() {
       height: 84px;
       border-radius: 50%;
       color: var(--m);
-      background: color-mix(in srgb, var(--m) 14%, #0b0a10);
+      background: color-mix(in srgb, var(--m) 14%, #0a0b09);
       border: 1.5px solid color-mix(in srgb, var(--m) 50%, transparent);
       box-shadow: 0 0 60px -12px var(--m);
     }
@@ -222,7 +222,7 @@ function leaderboards() {
       border-radius: 50%;
       font-size: 17px;
       font-weight: 800;
-      color: #120f1c;
+      color: #0f1a06;
       background: var(--m);
     }
     .base {

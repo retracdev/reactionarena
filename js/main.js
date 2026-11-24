@@ -410,6 +410,15 @@ document.addEventListener('visibilitychange', onReturn);
 window.addEventListener('focus', onReturn);
 window.addEventListener('online', onReturn);
 
+// No zooming on phones: iOS Safari ignores user-scalable=no in the viewport meta, so pinches
+// are blocked here. touch-action in style.css stops double-tap zoom.
+for (const type of ['gesturestart', 'gesturechange', 'gestureend']) {
+  document.addEventListener(type, (e) => e.preventDefault(), { passive: false });
+}
+document.addEventListener('touchmove', (e) => {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+
 window.addEventListener('hashchange', route);
 route();
 checkSession();

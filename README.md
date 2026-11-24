@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/favicon.svg" alt="Reaction Arena" width="560">
+  <img src="assets/favicon.svg" alt="Reaction Arena" width="160">
 </p>
 
 <p align="center">Ten quick browser challenges for reflexes, memory, focus and precision.<br>Part of the <a href="https://retrac.space">retrac.space</a> collection.</p>

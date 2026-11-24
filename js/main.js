@@ -102,7 +102,7 @@ function renderHome() {
   app.innerHTML = `
   <section class="hero view">
     <div class="hero-rings" aria-hidden="true"><span></span><span></span><span></span></div>
-    <div class="hero-badge"><span class="pulse-dot"></span> ${GAMES.length} tests · no sign-up · runs in your browser</div>
+    <div class="hero-badge"><span class="pulse-dot"></span> ${GAMES.length} tests · free to play · runs in your browser</div>
     <h1 class="hero-title">How quick is your <span class="grad">mind</span>, really?</h1>
     <p class="hero-sub">Bite-sized challenges for reflexes, memory, focus and precision. Pick a test, beat the clock, then go again.</p>
     <div class="hero-cta">
@@ -124,7 +124,7 @@ function renderHome() {
     <div class="feature">
       <span class="feature-icon">${icon('zap')}</span>
       <h3>Instant</h3>
-      <p>No accounts, no installs. Open a test and you're playing in a second.</p>
+      <p>Nothing to install. Every test plays right in your browser — sign in only if you want a spot on the leaderboard.</p>
     </div>
     <div class="feature">
       <span class="feature-icon">${icon('grid')}</span>
